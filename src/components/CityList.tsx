@@ -2,9 +2,10 @@ import { useState, type ChangeEvent } from "react";
 import axios from "axios";
 import type { City, ClockSettings } from "../types";
 import { useCurrentTime } from "../hooks/useCurrentTime";
-import { getCityTime } from "../utils/getCityTime";
+// import { getCityTime } from "../utils/getCityTime";
 import { defaultCities } from "../constants/defaultCities";
 import { useCity } from "../hooks/useCity";
+import CityCard from "./CityCard";
 
 export default function CityList() {
   const { cities, addCity, removeCity } = useCity(); // use context
@@ -27,6 +28,7 @@ export default function CityList() {
     try {
       setLoading(true);
 
+      // Get coordinates from OpenStreetMap
       const geoRes = await axios.get("https://nominatim.openstreetmap.org/search", {
         params: { q: cityName.trim(), format: "json", limit: 1 },
       });
@@ -35,6 +37,7 @@ export default function CityList() {
 
       const { lat, lon, display_name } = cityData;
 
+      // Get timezone from TimeZoneDB
       const tzRes = await axios.get("https://api.timezonedb.com/v2.1/get-time-zone", {
         params: {
           key: import.meta.env.VITE_TIMEZONEDB_KEY,
@@ -86,22 +89,30 @@ export default function CityList() {
         {loading ? "Adding..." : "Add City"}
       </button>
 
-      <ul>
-        {/* Hardcoded default cities */}
+      <div className="city-list">
+        {/* Default cities */}
         {defaultCities.map((city) => (
-          <li key={city.id}>
-            {city.name} — {getCityTime(currentTime, city.timezone, clockSettings)}
-          </li>
+          <CityCard
+            key={city.id}
+            city={city}
+            currentTime={currentTime}
+            clockSettings={clockSettings}
+            isDefault={true} // uses city.image
+          />
         ))}
 
-        {/* User-added cities from context */}
+        {/* User-added cities */}
         {cities.map((city) => (
-          <li key={city.id}>
-            {city.name} — {getCityTime(currentTime, city.timezone, clockSettings)}
-            <button onClick={() => removeCity(city.id)}>Delete</button>
-          </li>
+          <CityCard
+            key={city.id}
+            city={city}
+            currentTime={currentTime}
+            clockSettings={clockSettings}
+            onDelete={removeCity} // delete function
+            isDefault={false} // shows gradient
+          />
         ))}
-      </ul>
+      </div>
     </section>
   );
 }

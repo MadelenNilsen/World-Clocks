@@ -14,6 +14,7 @@ export interface City {
   name: string;
   timezone: string; //was enum TimeZoneEnum
   country?: string; // OPTIONAL ISSUE API
+  image?: string;
 }
 
 // Add this for the GeoDB API response
