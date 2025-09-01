@@ -1,37 +1,58 @@
 .city-card {
+  width: 250px;
+  height: 450px; /* taller cards */
   border-radius: 12px;
-  padding: 1rem;
-  color: white;
-  text-align: center;
   margin: 1rem;
-  min-width: 200px;
-  max-width: 250px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  padding: 1rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: white;
+  overflow: hidden;
+  position: relative;
 }
 
 .city-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.4);
 }
 
-.city-card h2 {
-  margin: 0.5rem 0;
+.text-overlay {
+  text-align: center;
+  background: rgba(0,0,0,0.35); /* semi-transparent overlay for readability */
+  padding: 0.5rem;
+  border-radius: 8px;
 }
 
-.city-card p {
+.text-overlay h2 {
   margin: 0.25rem 0;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.text-overlay .time-text {
+  margin: 0.25rem 0 0 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(0,0,0,0.7);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
 }
 
 .city-card button {
-  margin-top: 0.5rem;
+  align-self: center;
   background: rgba(255,255,255,0.3);
   border: none;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .city-card button:hover {
   background: rgba(255,255,255,0.6);
+}

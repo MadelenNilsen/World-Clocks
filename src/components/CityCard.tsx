@@ -18,25 +18,21 @@ const CityCard: React.FC<CityCardProps> = ({
   onDelete,
   isDefault,
 }) => {
-  // Use specific image if default city, otherwise gradient
-  const bgStyle = {
-    background: isDefault && city.image
-      ? `url(${city.image}) center/cover no-repeat`
-      : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    padding: "1rem",
-    borderRadius: "10px",
-    color: "white",
-    marginBottom: "1rem",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+ const bgStyle = {
+  background: isDefault && city.image
+    ? `url(${city.image}) center/cover no-repeat`
+    : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
   };
 
   return (
     <div style={bgStyle}>
-      <div>
+      <div className="text-overlay">
         <h2>{city.name}</h2>
-        <p>{getCityTime(currentTime, city.timezone, clockSettings)}</p>
+        <p>
+          <span className="time-text">
+            {getCityTime(currentTime, city.timezone, clockSettings)}
+          </span>
+        </p>
       </div>
       {onDelete && <button onClick={() => onDelete(city.id)}>Delete</button>}
     </div>
