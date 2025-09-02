@@ -18,14 +18,17 @@ const CityCard: React.FC<CityCardProps> = ({
   onDelete,
   isDefault,
 }) => {
- const bgStyle = {
-  background: isDefault && city.image
-    ? `url(${city.image}) center/cover no-repeat`
-    : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-  };
+  // Assign class based on default or API-added city
+  const cardClass = isDefault ? "city-card default" : "city-card api-city";
+
+  // For default cities with images, pass the image via CSS variable
+  const cardStyle =
+    isDefault && city.image
+      ? { "--bg-image": `url(${city.image})` } as React.CSSProperties
+      : {};
 
   return (
-    <div style={bgStyle}>
+    <div className={cardClass} style={cardStyle}>
       <div className="text-overlay">
         <h2>{city.name}</h2>
         <p>
