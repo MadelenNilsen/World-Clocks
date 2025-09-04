@@ -73,3 +73,21 @@
 .city-card button:hover {
   background: rgba(255,255,255,0.6);
 }
+
+
+/* Analog clock */
+.analog-clock {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+  background: rgba(0, 0, 0, 0.4); /* dark background */
+  padding: 0.5rem;
+  border-radius: 8px; /* rounded edges */
+}
+
+.analog-clock .react-clock {
+  width: 120px;
+  height: 120px;
+  box-shadow: 4px 4px 12px rgba(209, 202, 202, 0.6);
+  border-radius: 50%;
+}
