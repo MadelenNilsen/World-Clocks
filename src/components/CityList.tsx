@@ -2,7 +2,6 @@ import { useState, type ChangeEvent } from "react";
 import axios from "axios";
 import type { City, ClockSettings } from "../types";
 import { useCurrentTime } from "../hooks/useCurrentTime";
-// import { getCityTime } from "../utils/getCityTime";
 import { defaultCities } from "../constants/defaultCities";
 import { useCity } from "../hooks/useCity";
 import CityCard from "./CityCard";
@@ -24,29 +23,39 @@ export default function CityList() {
     setNewCityName(e.target.value);
   };
 
+  // --- Frontend-only city search via Nominatim + CORS proxy ---
   const getCityTimezone = async (cityName: string): Promise<City | null> => {
     try {
       setLoading(true);
 
-      // Get coordinates from OpenStreetMap
-      const geoRes = await axios.get("https://nominatim.openstreetmap.org/search", {
-        params: { q: cityName.trim(), format: "json", limit: 1 },
-      });
-      const cityData = geoRes.data[0];
+      // Use AllOrigins CORS proxy to bypass CORS restriction
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+        cityName
+      )}&format=json&limit=1`;
+
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+      const geoRes = await axios.get(proxyUrl);
+      const data = JSON.parse(geoRes.data.contents);
+      const cityData = data[0];
+
       if (!cityData) return null;
 
       const { lat, lon, display_name } = cityData;
 
-      // Get timezone from TimeZoneDB
-      const tzRes = await axios.get("https://api.timezonedb.com/v2.1/get-time-zone", {
-        params: {
-          key: import.meta.env.VITE_TIMEZONEDB_KEY,
-          format: "json",
-          by: "position",
-          lat,
-          lng: lon,
-        },
-      });
+      // Get timezone from TimeZoneDB (still frontend)
+      const tzRes = await axios.get(
+        "https://api.timezonedb.com/v2.1/get-time-zone",
+        {
+          params: {
+            key: import.meta.env.VITE_TIMEZONEDB_KEY,
+            format: "json",
+            by: "position",
+            lat,
+            lng: lon,
+          },
+        }
+      );
 
       const timezone = tzRes.data.zoneName;
       if (!timezone) return null;
@@ -69,7 +78,7 @@ export default function CityList() {
     if (!newCityName.trim()) return;
 
     const cityInfo = await getCityTimezone(newCityName);
-    if (cityInfo) addCity(cityInfo); // add via context
+    if (cityInfo) addCity(cityInfo);
     else alert("City not found!");
 
     setNewCityName("");
@@ -97,7 +106,7 @@ export default function CityList() {
             city={city}
             currentTime={currentTime}
             clockSettings={clockSettings}
-            isDefault={true} // uses city.image
+            isDefault={true}
           />
         ))}
 
@@ -108,8 +117,8 @@ export default function CityList() {
             city={city}
             currentTime={currentTime}
             clockSettings={clockSettings}
-            onDelete={removeCity} // delete function
-            isDefault={false} // shows gradient
+            onDelete={removeCity}
+            isDefault={false}
           />
         ))}
       </div>
